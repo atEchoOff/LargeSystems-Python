@@ -8,18 +8,12 @@ class TMOCSolver:
     # Using the θ method, with equal stepsizes h
     # Due to the amount of parameters, this class will use the builder construct
 
-    def __init__(self, t0, y0, h, K, ny, nu):
+    def __init__(self, t0, tf, y0, ny, nu):
         self.t0 = t0
+        self.tf = tf
         self.y0 = y0
-        self.h = h
-        self.K = K
         self.ny = ny
         self.nu = nu
-
-        # Initialize the variables
-        self._y = ShiftedList(0, [ShiftedList(1, ["y" + str(i) + str(j) for j in range(1, ny + 1)]) for i in range(0, K + 1)])
-        self.λ = ShiftedList(1, [ShiftedList(1, ["λ" + str(i) + str(j) for j in range(1, ny + 1)]) for i in range(1, K + 1)])
-        self._u = ShiftedList(0, [ShiftedList(1, ["u" + str(i) + str(j) for j in range(1, nu + 1)]) for i in range(0, K + 1)])
 
         self.Δlᶠ = None
 
@@ -54,7 +48,7 @@ class TMOCSolver:
         self.fᵤ = fᵤ
         return self
     
-    def solve(self, θ):
+    def solve(self, θ, K):
         # Solve the problem given θ
         # A Solution object is returned
 
@@ -84,14 +78,19 @@ class TMOCSolver:
             return
         
         # Collect the variables into one long list
+        # Initialize the variables
+        _y = ShiftedList(0, [ShiftedList(1, ["y" + str(i) + str(j) for j in range(1, self.ny + 1)]) for i in range(0, K + 1)])
+        _λ = ShiftedList(1, [ShiftedList(1, ["λ" + str(i) + str(j) for j in range(1, self.ny + 1)]) for i in range(1, K + 1)])
+        _u = ShiftedList(0, [ShiftedList(1, ["u" + str(i) + str(j) for j in range(1, self.nu + 1)]) for i in range(0, K + 1)])
+        
         all_vars = []
-        for y in self._y.list:
+        for y in _y.list:
             all_vars.extend(y.list)
         
-        for l in self.λ.list:
+        for l in _λ.list:
             all_vars.extend(l.list)
 
-        for u in self._u.list:
+        for u in _u.list:
             all_vars.extend(u.list)
 
         # Shorthand
@@ -101,19 +100,19 @@ class TMOCSolver:
         f = self.f
         fᵧ = self.fᵧ
         fᵤ = self.fᵤ
-        K = self.K
-        y = ShiftedList(0, [V(*self._y[i].list) for i in range(0, K + 1)])
-        λ = ShiftedList(1, [V(*self.λ[i].list) for i in range(1, K + 1)])
-        u = ShiftedList(0, [V(*self._u[i].list) for i in range(0, K + 1)])
-        h = self.h
+        y = ShiftedList(0, [V(*_y[i].list) for i in range(0, K + 1)])
+        λ = ShiftedList(1, [V(*_λ[i].list) for i in range(1, K + 1)])
+        u = ShiftedList(0, [V(*_u[i].list) for i in range(0, K + 1)])
+        h = (self.tf - self.t0) / K
         y0 = self.y0
 
         # Initialize our domain
         t = [self.t0 + h * i for i in range(0, K + 1)]
         
+        # Start building our system!
         builder = SystemBuilder(all_vars)
 
-        # First, add the lambda_k constraint
+        # Constraint from (8)
         builder.add_constraint(λ[K] - h * (1 - θ) * fᵧ.T * λ[K] ==
                                     -Δlᶠ(y[K]) - h * (1 - θ) * Δᵧl(y[K], u[K], t[K]))
 
