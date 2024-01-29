@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 def Δlᶠ(y):
-    return ZERO
+    return 0
 
 def Δᵧl(y, u, t):
     return 2 * y

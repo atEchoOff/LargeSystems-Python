@@ -18,21 +18,21 @@ class SystemBuilder:
         for i, variable in enumerate(names):
             self.var_idxs[variable] = i
 
-    def add_constraint(self, linear):
+    def add_constraint(self, equation):
         # Accept an equation of the form RHS = A1 * x1 + A2 * x2 + ...
         # Cast RHS to a numpy array
-        RHS = np.asmatrix(linear.RHS, dtype=np.float64)
+        RHS = np.asmatrix(equation.RHS, dtype=np.float64)
 
-        height = linear.left[0].shape[0]
+        height = equation.left[0].shape[0]
         bottom = self.determined + height
 
         # Add RHS to the corresponding position in b
         self.b[self.determined:bottom] += RHS
 
-        for i in range(0, len(linear.left)):
+        for i in range(0, len(equation.left)):
             # We have a new part of the left hand side, Ai * xi
-            newnewA = linear.left[i]
-            newnewx = linear.right[i]
+            newnewA = equation.left[i]
+            newnewx = equation.right[i]
 
             # Here, we loop through each variable and place the corresponding column of Ai into the correct
             # column of newA for that corresponding variable
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     ], dtype=np.float64)
 
     builder = SystemBuilder(vars)
-    builder.add_constraint(0 == matr1 * V(*x) - .05 * matr2 * V(*y))
+    builder.add_constraint(0 == matr1 * V(*x) - 2 * matr2 * V(*y))
     builder.add_constraint([[1], [2]] == matr2 * V(*y))
     builder.add_constraint(-1 == matr3 * V("x1", "x2", "x3", "y2"))
 

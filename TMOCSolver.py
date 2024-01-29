@@ -95,51 +95,56 @@ class TMOCSolver:
             all_vars.extend(u.list)
 
         # Shorthand
+        Δlᶠ = self.Δlᶠ
+        Δᵧl = self.Δᵧl
+        Δᵤl = self.Δᵤl
+        f = self.f
+        fᵧ = self.fᵧ
+        fᵤ = self.fᵤ
         K = self.K
         y = ShiftedList(0, [V(*self._y[i].list) for i in range(0, K + 1)])
         λ = ShiftedList(1, [V(*self.λ[i].list) for i in range(1, K + 1)])
         u = ShiftedList(0, [V(*self._u[i].list) for i in range(0, K + 1)])
         h = self.h
+        y0 = self.y0
 
+        # Initialize our domain
         t = [self.t0 + h * i for i in range(0, K + 1)]
         
         builder = SystemBuilder(all_vars)
 
         # First, add the lambda_k constraint
-        builder.add_constraint(0 == λ[K] + self.Δlᶠ(y[K])
-                                    + h * (1 - θ) * self.Δᵧl(y[K], u[K], t[K])\
-                                    - h * (1 - θ) * self.fᵧ.T * λ[K])
+        builder.add_constraint(λ[K] - h * (1 - θ) * fᵧ.T * λ[K] ==
+                                    -Δlᶠ(y[K]) - h * (1 - θ) * Δᵧl(y[K], u[K], t[K]))
 
         for k in range(0, K - 1):
             # Add constraint from (9)
-            builder.add_constraint(0 == λ[k + 1]
-                                        - h * (1 - θ) * self.fᵧ.T * λ[k + 1]
-                                        + h * self.Δᵧl(y[k + 1], u[k + 1], t[k + 1])
-                                        - λ[k + 2]
-                                        - h * θ * self.fᵧ.T * λ[k + 2])
+            builder.add_constraint(λ[k + 1] - h * (1 - θ) * fᵧ.T * λ[k + 1] ==
+                                        -h * Δᵧl(y[k + 1], u[k + 1], t[k + 1]) + λ[k + 2]
+                                        + h * θ * fᵧ.T * λ[k + 2])
             
         
         # Add the constraint from (10)
-        builder.add_constraint(0 == h * θ * self.Δᵤl(y[0], u[0], t[0])
-                                    - h * θ * self.fᵤ.T * λ[1])
+        builder.add_constraint(0 == h * θ * Δᵤl(y[0], u[0], t[0])
+                                    - h * θ * fᵤ.T * λ[1])
         
         # Add the constraint from (11)
-        builder.add_constraint(0 == h * (1 - θ) * self.Δᵤl(y[K], u[K], t[K])
-                                    - h * (1 - θ) * self.fᵤ.T * λ[K])
+        builder.add_constraint(0 == h * (1 - θ) * Δᵤl(y[K], u[K], t[K])
+                                    - h * (1 - θ) * fᵤ.T * λ[K])
         
         for k in range(1, K):
             # Add the constraint from (12)
-            builder.add_constraint(0 == h * self.Δᵤl(y[k], u[k], t[k])
-                                        - h * θ * self.fᵤ.T * λ[k + 1]
-                                        - h * (1 - θ) * self.fᵤ.T * λ[k])
+            builder.add_constraint(0 == h * Δᵤl(y[k], u[k], t[k])
+                                        - h * θ * fᵤ.T * λ[k + 1]
+                                        - h * (1 - θ) * fᵤ.T * λ[k])
             
         # Add θ method base case
-        builder.add_constraint(self.y0 == y[0])
+        builder.add_constraint(y[0] == y0)
 
         # Add all θ method steps
         for k in range(0, K):
-            builder.add_constraint(0 == y[k] - y[k + 1]
-                                        + h * θ * self.f(y[k], u[k], t[k]) 
-                                        + h * (1 - θ) * self.f(y[k + 1], u[k + 1], t[k + 1]))
+            builder.add_constraint(y[k + 1] == y[k]
+                                        + h * θ * f(y[k], u[k], t[k]) 
+                                        + h * (1 - θ) * f(y[k + 1], u[k + 1], t[k + 1]))
         
         return builder.solve()
