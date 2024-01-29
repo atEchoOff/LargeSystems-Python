@@ -1,5 +1,4 @@
 from TMOCSolver import *
-from LargeSystems.linear import *
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -27,12 +26,12 @@ nu = 1
 
 
 solver = TMOCSolver(t0, tf, y0, ny, nu)\
-         .with_Δlᶠ(Δlᶠ)\
-         .with_Δᵧl(Δᵧl)\
-         .with_Δᵤl(Δᵤl)\
-         .with_f(f)\
-         .with_fᵧ(fᵧ)\
-         .with_fᵤ(fᵤ)
+        .with_Δlᶠ(Δlᶠ)\
+        .with_Δᵧl(Δᵧl)\
+        .with_Δᵤl(Δᵤl)\
+        .with_f(f)\
+        .with_fᵧ(fᵧ)\
+        .with_fᵤ(fᵤ)
 
 def evaluate_system(θ, K, plot=False):
     solution = solver.solve(θ, K)

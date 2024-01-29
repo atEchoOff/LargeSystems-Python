@@ -53,27 +53,27 @@ class TMOCSolver:
         # A Solution object is returned
 
         # First, make sure we have everything from the builder pattern
-        if self.Δlᶠ == None:
+        if self.Δlᶠ is None:
             print("Δlᶠ was not initialized")
             return
         
-        if self.Δᵧl == None:
+        if self.Δᵧl is None:
             print("Δᵧl was not initialized")
             return
         
-        if self.Δᵤl == None:
+        if self.Δᵤl is None:
             print("Δᵤl was not initialized")
             return
         
-        if self.f == None:
+        if self.f is None:
             print("f was not initialized")
             return
         
-        if self.fᵧ == None:
+        if self.fᵧ is None:
             print("fᵧ was not initialized")
             return
         
-        if self.fᵤ == None:
+        if self.fᵤ is None:
             print("fᵤ was not initialized")
             return
         
