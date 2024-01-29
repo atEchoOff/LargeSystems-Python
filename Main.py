@@ -63,7 +63,7 @@ plt.legend(loc="best")
 plt.show()
 
 
-plt.plot(domain_y_u, y, label="u")
+plt.plot(domain_y_u, u, label="u")
 plt.plot(domain_y_u, true_u(domain_y_u), label="u*")
 plt.legend(loc="best")
 plt.show()
