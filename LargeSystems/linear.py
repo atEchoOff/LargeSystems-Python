@@ -2,14 +2,10 @@ from numbers import Number
 import numpy as np
 from copy import deepcopy
 
-class V:
-    # A container for variables
-    def __init__(self, *vars):
-        self.vars = vars
-
-    def __rmul__(self, val):
-        # A matrix is being multiplied on the left, this should turn into a linear type
-        return Linear(val, self.vars)
+def V(*args):
+    # Convert variables to a linear system
+    # A bit memory inefficient, fixes coming later FIXME
+    return Linear(np.identity(len(args)), args)
 
 class Linear:
     # A builder for the left hand side of a linear equation
@@ -84,8 +80,6 @@ class Linear:
 
     def __add__(self, val):
         # Add a linear element to another
-        # Note, this is not to be used for adding matrices or scalars to elements
-        # This is a "linear object", to add constants makes it affine
         ret = deepcopy(self)
         ret.left.extend(val.left)
         ret.right.extend(val.right)

@@ -10,10 +10,10 @@ def Δᵧl(y, u, t):
     return 2 * y
 
 def Δᵤl(y, u, t):
-    return 1 * u
+    return u
 
 def f(y, u, t):
-    return .5 * y + 1 * u
+    return .5 * y + u
 
 fᵧ = np.asmatrix(.5, dtype=np.float64)
 
