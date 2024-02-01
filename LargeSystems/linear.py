@@ -94,6 +94,7 @@ class Linear:
         ret = deepcopy(self)
         ret.left.extend(val.left)
         ret.right.extend(val.right)
+        ret.constant = self.constant + val.constant
 
         return ret
     
@@ -115,6 +116,7 @@ class Linear:
         ret = deepcopy(val)
         ret.left.extend(self.left)
         ret.right.extend(self.right)
+        ret.constant = val.constant + self.constant
 
         return ret
     

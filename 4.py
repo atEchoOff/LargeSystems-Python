@@ -74,6 +74,7 @@ domain = np.linspace(0, 1, K + 1)
 for dim in range(1, ny + 1):
     plt.plot(domain, yT_sols[dim], label=f"Solution in dimension {dim}")
 
+plt.legend(loc="best")
 plt.xlabel("t")
 plt.ylabel("y")
 plt.title("All Dimensions of the Solution y")
