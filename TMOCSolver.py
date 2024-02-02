@@ -124,12 +124,12 @@ class TMOCSolver:
             
         
         # Add the constraint from (10)
-        builder.add_constraint(0 == h * θ * Δᵤl(y[0], u[0], t[0])
-                                    - h * θ * fᵤ.T * λ[1])
+        builder.add_constraint(0 == h * Δᵤl(y[0], u[0], t[0])
+                                    - h * fᵤ.T * λ[1])
         
         # Add the constraint from (11)
-        builder.add_constraint(0 == h * (1 - θ) * Δᵤl(y[K], u[K], t[K])
-                                    - h * (1 - θ) * fᵤ.T * λ[K])
+        builder.add_constraint(0 == h * Δᵤl(y[K], u[K], t[K])
+                                    - h * fᵤ.T * λ[K])
         
         for k in range(1, K):
             # Add the constraint from (12)
