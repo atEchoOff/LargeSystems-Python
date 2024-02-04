@@ -97,46 +97,34 @@ def evaluate_system(θ, K, plot=False):
     max_diff_λ = np.max(np.abs(λ - true_λ(domain_λ)))
     return max_diff_y, max_diff_u, max_diff_λ
 
-def evaluate_errors(errors):
+def evaluate_errors(θ):
     diff_y = []
     diff_u = []
     diff_λ = []
     for K in [10, 20, 40, 80]:
-        max_diff_y, max_diff_u, max_diff_λ = errors(K)
+        max_diff_y, max_diff_u, max_diff_λ = evaluate_system(θ, K, plot=False)
         diff_y.append(max_diff_y)
         diff_u.append(max_diff_u)
         diff_λ.append(max_diff_λ)
-
+    print(f"For θ = {θ}")
     print("Function\tK=10\t\tK=20\t\tK=40\t\tK=80")
     print("y\t\t", "\t".join(map("{0:.6g}".format, diff_y)))
     print("u\t\t", "\t".join(map("{0:.6g}".format, diff_u)))
     print("λ\t\t", "\t".join(map("{0:.6g}".format, diff_λ)))
 
     plt.plot([1/10, 1/20, 1/40, 1/80], diff_y, label="Max Absolute Error in y")
-    plt.legend(loc="best")
-    plt.xlabel("h")
-    plt.ylabel("y")
-    plt.title("The Effect of h on the Accuracy of y")
-    plt.show()
-
     plt.plot([1/10, 1/20, 1/40, 1/80], diff_u, label="Max Absolute Error in u")
-    plt.legend(loc="best")
-    plt.xlabel("h")
-    plt.ylabel("y")
-    plt.title("The Effect of h on the Accuracy of u")
-    plt.show()
-
     plt.plot([1/10, 1/20, 1/40, 1/80], diff_λ, label="Max Absolute Error in λ")
     plt.legend(loc="best")
     plt.xlabel("h")
     plt.ylabel("y")
-    plt.title("The Effect of h on the Accuracy of λ")
+    plt.title(f"The Effect of h on the Accuracy of the Solution for θ = {θ}")
     plt.show()
 
-print(evaluate_system(0, 10, plot=True))
-print(evaluate_system(.5, 10, plot=True))
-print(evaluate_system(1, 10, plot=True))
+evaluate_system(0, 10, plot=True)
+evaluate_system(.5, 10, plot=True)
+evaluate_system(1, 10, plot=True)
 
-evaluate_errors(lambda K: evaluate_system(0, K, plot=False))
-evaluate_errors(lambda K: evaluate_system(.5, K, plot=False))
-evaluate_errors(lambda K: evaluate_system(1, K, plot=False))
+evaluate_errors(0)
+evaluate_errors(.5)
+evaluate_errors(1)
