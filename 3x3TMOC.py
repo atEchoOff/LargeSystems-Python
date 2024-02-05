@@ -1,6 +1,6 @@
-from TMOCSolver import *
+from ProblemSolvers.TMOCSolver import *
 import numpy as np
-from ShiftedList import ShiftedList
+from Utils.ShiftedList import ShiftedList
 from matplotlib import pyplot as plt
 
 A = np.matrix([

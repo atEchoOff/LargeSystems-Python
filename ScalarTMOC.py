@@ -1,4 +1,4 @@
-from TMOCSolver import *
+from ProblemSolvers.TMOCSolver import *
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -6,13 +6,13 @@ def Δlᶠ(y):
     return 0
 
 def Δᵧl(y, u, t):
-    return np.asmatrix(2) * y
+    return 2 * y
 
 def Δᵤl(y, u, t):
     return u
 
 def f(y, u, t):
-    return np.asmatrix(.5) * y + u
+    return .5 * y + u
 
 fᵧ = np.asmatrix(.5, dtype=np.float64)
 
@@ -121,9 +121,9 @@ def evaluate_errors(θ):
     plt.title(f"The Effect of h on the Accuracy of the Solution for θ = {θ}")
     plt.show()
 
-evaluate_system(0, 10, plot=True)
-evaluate_system(.5, 10, plot=True)
-evaluate_system(1, 10, plot=True)
+evaluate_system(0, 100, plot=True)
+evaluate_system(.5, 100, plot=True)
+evaluate_system(1, 100, plot=True)
 
 evaluate_errors(0)
 evaluate_errors(.5)

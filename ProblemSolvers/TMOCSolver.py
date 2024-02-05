@@ -1,6 +1,6 @@
 from LargeSystems.systembuilder import SystemBuilder
 from LargeSystems.linear import V
-from ShiftedList import *
+from Utils.ShiftedList import *
 
 
 class TMOCSolver:
