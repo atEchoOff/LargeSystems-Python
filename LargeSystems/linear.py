@@ -2,10 +2,50 @@ from numbers import Number
 import numpy as np
 from copy import deepcopy
 
+class Identity:
+    # An identity matrix simulator for linear systems
+    def __init__(self, val, dim):
+        self.val = val
+        self.shape = [dim]
+
+    def __getitem__(self, keys):
+        # Simulate getting a value from the identity matrix, dont check bounds
+        # We only use these matrices to get column arrays anyway
+        i, j = keys
+        
+        if isinstance(i, slice) and i.start == None and i.stop == None and i.step == None:
+            # self[:,index]
+            ret = np.zeros((self.shape[0], 1))
+            ret[j, 0] = self.val
+            return ret
+        
+        else:
+            raise AttributeError("Can only get columns from identity matrix")
+    
+    def __mul__(self, other):
+        # Multiply by identity matrix
+        if isinstance(other, Number):
+            # Instead return a new identity which contains a new number in the diagonal
+            return Identity(self.val * other, self.shape[0])
+        
+        # Instead, assume we are multiplying a matrix or vector
+        return self.val * other
+    
+    def __rmul__(self, other):
+        # Multiply by identity matrix
+        if isinstance(other, Number):
+            # Instead return a new identity which contains a new number in the diagonal
+            return Identity(other * self.val, self.shape[0])
+        
+        # Instead, assume we are multiplying a matrix or vector
+        return other * self.val
+    
+    def __neg__(self):
+        return Identity(-self.val, self.shape[0])
+
 def V(*args):
     # Convert variables to a linear system
-    # A bit memory inefficient, fixes coming later FIXME
-    return Linear(np.asmatrix(np.identity(len(args))), args)
+    return Linear(Identity(1, len(args)), args)
 
 class Linear:
     # A builder for the left hand side of a linear equation
@@ -28,6 +68,19 @@ class Linear:
         ret.constant = deepcopy(self.constant)
         return ret
     
+    def evaluate(self, **vargs):
+        # Evaluate linear system given arguments
+        # FIXME a bit inefficient, speedup coming soon
+        height = self.left[0].shape[0]
+        ret = np.zeros((height, 1), np.float64)
+
+        for i in range(0, len(self.left)):
+            left = self.left[i]
+            right = np.asmatrix(list(map(vargs.get, self.right[i]))).T
+            ret += left * right
+
+        return ret
+
     def __eq__(self, RHS):
         # This is not an equals method!
         # This instead saves the value, right hand side, as the right hand side for this object
@@ -35,7 +88,7 @@ class Linear:
         if isinstance(RHS, Number):
             # Shorthand, make the RHS be the correct height
             # First, determine the height
-            height = np.shape(self.left[0])[0]
+            height = self.left[0].shape[0]
 
             # Now, set RHS accordingly
             RHS = np.asmatrix([[RHS]] * height)
@@ -152,6 +205,9 @@ class Equation:
     # Really the only point of this class is to pass into a systembuilder
     # and not have any operators
     def __init__(self, linear, RHS):
-        self.left = linear.left
-        self.right = linear.right
+        self.linear = linear
         self.RHS = RHS
+
+    def evaluate(self, **vars):
+        # Return the evaluation of the corresponding linear system
+        return self.linear.evaluate(**vars)

@@ -1,4 +1,5 @@
-from LargeSystems.systembuilder import SystemBuilder
+from LargeSystems.densesystem import DenseSystem
+from LargeSystems.solvers import SimpleSolver
 from LargeSystems.linear import V
 from Utils.ShiftedList import *
 
@@ -110,40 +111,40 @@ class TMOCSolver:
         t = [self.t0 + h * i for i in range(0, K + 1)]
         
         # Start building our system!
-        builder = SystemBuilder(all_vars)
+        system = DenseSystem(all_vars)
 
         # Constraint from (8)
-        builder.add_constraint(λ[K] - h * (1 - θ) * fᵧ.T * λ[K] ==
+        system.add_constraint(λ[K] - h * (1 - θ) * fᵧ.T * λ[K] ==
                                     -Δlᶠ(y[K]) - h * (1 - θ) * Δᵧl(y[K], u[K], t[K]))
 
         for k in range(0, K - 1):
             # Add constraint from (9)
-            builder.add_constraint(λ[k + 1] - h * (1 - θ) * fᵧ.T * λ[k + 1] ==
+            system.add_constraint(λ[k + 1] - h * (1 - θ) * fᵧ.T * λ[k + 1] ==
                                         -h * Δᵧl(y[k + 1], u[k + 1], t[k + 1]) + λ[k + 2]
                                         + h * θ * fᵧ.T * λ[k + 2])
             
         
         # Add the constraint from (10)
-        builder.add_constraint(0 == h * Δᵤl(y[0], u[0], t[0])
+        system.add_constraint(0 == h * Δᵤl(y[0], u[0], t[0])
                                     - h * fᵤ.T * λ[1])
         
         # Add the constraint from (11)
-        builder.add_constraint(0 == h * Δᵤl(y[K], u[K], t[K])
+        system.add_constraint(0 == h * Δᵤl(y[K], u[K], t[K])
                                     - h * fᵤ.T * λ[K])
         
         for k in range(1, K):
             # Add the constraint from (12)
-            builder.add_constraint(0 == h * Δᵤl(y[k], u[k], t[k])
+            system.add_constraint(0 == h * Δᵤl(y[k], u[k], t[k])
                                         - h * θ * fᵤ.T * λ[k + 1]
                                         - h * (1 - θ) * fᵤ.T * λ[k])
             
         # Add θ method base case
-        builder.add_constraint(y[0] == y0)
+        system.add_constraint(y[0] == y0)
 
         # Add all θ method steps
         for k in range(0, K):
-            builder.add_constraint(y[k + 1] == y[k]
+            system.add_constraint(y[k + 1] == y[k]
                                         + h * θ * f(y[k], u[k], t[k]) 
                                         + h * (1 - θ) * f(y[k + 1], u[k + 1], t[k + 1]))
         
-        return builder.solve()
+        return SimpleSolver().solve(system)
