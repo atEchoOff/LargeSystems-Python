@@ -1,4 +1,4 @@
-from LargeSystems.densesystem import DenseSystem
+from LargeSystems.system import System
 from LargeSystems.solvers import SimpleSolver
 from LargeSystems.linear import V
 from Utils.ShiftedList import *
@@ -111,7 +111,7 @@ class TMOCSolver:
         t = [self.t0 + h * i for i in range(0, K + 1)]
         
         # Start building our system!
-        system = DenseSystem(all_vars)
+        system = System(all_vars)
 
         # Constraint from (8)
         system.add_constraint(λ[K] - h * (1 - θ) * fᵧ.T * λ[K] ==
@@ -147,4 +147,4 @@ class TMOCSolver:
                                         + h * θ * f(y[k], u[k], t[k]) 
                                         + h * (1 - θ) * f(y[k + 1], u[k + 1], t[k + 1]))
         
-        return SimpleSolver().solve(system)
+        return SimpleSolver(sparse=True).solve(system) # The resulting system is relative sparse

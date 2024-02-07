@@ -67,19 +67,6 @@ class Linear:
         ret.right = deepcopy(self.right)
         ret.constant = deepcopy(self.constant)
         return ret
-    
-    def evaluate(self, **vargs):
-        # Evaluate linear system given arguments
-        # FIXME a bit inefficient, speedup coming soon
-        height = self.left[0].shape[0]
-        ret = np.zeros((height, 1), np.float64)
-
-        for i in range(0, len(self.left)):
-            left = self.left[i]
-            right = np.asmatrix(list(map(vargs.get, self.right[i]))).T
-            ret += left * right
-
-        return ret
 
     def __eq__(self, RHS):
         # This is not an equals method!
@@ -207,7 +194,3 @@ class Equation:
     def __init__(self, linear, RHS):
         self.linear = linear
         self.RHS = RHS
-
-    def evaluate(self, **vars):
-        # Return the evaluation of the corresponding linear system
-        return self.linear.evaluate(**vars)

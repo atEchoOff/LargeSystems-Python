@@ -2,26 +2,25 @@ import numpy as np
 from LargeSystems.solution import *
 from LargeSystems.linear import *
 
-class DenseSystem:
+class System:
     # Build a dense system of the form Ax = b
     # Add linear systems to matrix form as constraints are added
     
-    def __init__(self, names):
+    def __init__(self, names, sparse=False):
         # Initialize a system builder given names for each variable
+        # If sparse, solve system using sparse calculations
+        # Internally, each matrix is not sparse
+        # FIXME this will change later
         self.var_names = names
         self.A = np.matrix(np.zeros((len(names), len(names)), np.float64))
         self.b = np.zeros((len(names), 1), np.float64)
-
+        
         self.var_idxs = dict()
 
         self.determined = 0
 
         for i, variable in enumerate(names):
             self.var_idxs[variable] = i
-
-    def evaluate(self, **vars):
-        # Evaluate A * x
-        return self.A * np.asmatrix(list(map(vars.get, self.var_names))).T
 
     def add_constraint(self, equation):
         # Accept an equation of the form RHS = A1 * x1 + A2 * x2 + ...
