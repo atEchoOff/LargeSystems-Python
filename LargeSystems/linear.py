@@ -40,12 +40,28 @@ class Identity:
         # Instead, assume we are multiplying a matrix or vector
         return other * self.val
     
+    def __truediv__(self, other):
+        # Divide identity by float
+        return self * (1 / other)
+    
     def __neg__(self):
         return Identity(-self.val, self.shape[0])
 
-def V(*args):
+def V(*vars):
     # Convert variables to a linear system
-    return Linear(Identity(1, len(args)), args)
+    # Items passed in as a series of lists
+    # If one list, treated as one variable
+    # If multiple, return as a list of variables
+    if len(vars) == 1:
+        return Linear(Identity(1, len(vars[0])), vars[0])
+    
+    ret = []
+    for var in vars:
+        if isinstance(var, str):
+            # variable must be packed in a list
+            var = [var]
+        ret.append(Linear(Identity(1, len(var)), var))
+    return ret
 
 class Linear:
     # A builder for the left hand side of a linear equation
@@ -116,6 +132,10 @@ class Linear:
         ret.constant = val * self.constant
 
         return ret
+    
+    def __truediv__(self, other):
+        # Divide self by some float
+        return self * (1 / other)
 
     def __add__(self, val):
         # Add a linear element to another

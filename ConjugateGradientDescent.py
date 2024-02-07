@@ -1,4 +1,4 @@
-from LargeSystems.solvers import GradientMethodSolver
+from LargeSystems.solvers import ConjugateGradientMethodSolver
 import numpy as np
 from matplotlib import pyplot as plt
 from Utils.PDEs import build_poisson
@@ -12,7 +12,7 @@ def u(x):
     return np.cos(np.pi * x)
 
 system = build_poisson(30, 1, -1, f)
-solver = GradientMethodSolver(sparse=True)
+solver = ConjugateGradientMethodSolver(sparse=True)
 
 x, _, _ = solver.solve(system)
 x = np.vstack(([1], x, [-1]))

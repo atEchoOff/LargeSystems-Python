@@ -6,15 +6,12 @@ class System:
     # Build a dense system of the form Ax = b
     # Add linear systems to matrix form as constraints are added
     
-    def __init__(self, names, sparse=False):
+    def __init__(self, names):
         # Initialize a system builder given names for each variable
-        # If sparse, solve system using sparse calculations
-        # Internally, each matrix is not sparse
-        # FIXME this will change later
         self.var_names = names
         self.A = np.matrix(np.zeros((len(names), len(names)), np.float64))
         self.b = np.zeros((len(names), 1), np.float64)
-        
+
         self.var_idxs = dict()
 
         self.determined = 0

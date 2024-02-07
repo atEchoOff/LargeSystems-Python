@@ -101,9 +101,9 @@ class TMOCSolver:
         f = self.f
         fᵧ = self.fᵧ
         fᵤ = self.fᵤ
-        y = ShiftedList(0, [V(*_y[i].list) for i in range(0, K + 1)])
-        λ = ShiftedList(1, [V(*_λ[i].list) for i in range(1, K + 1)])
-        u = ShiftedList(0, [V(*_u[i].list) for i in range(0, K + 1)])
+        y = ShiftedList(0, [V(_y[i].list) for i in range(0, K + 1)])
+        λ = ShiftedList(1, [V(_λ[i].list) for i in range(1, K + 1)])
+        u = ShiftedList(0, [V(_u[i].list) for i in range(0, K + 1)])
         h = (self.tf - self.t0) / K
         y0 = self.y0
 
