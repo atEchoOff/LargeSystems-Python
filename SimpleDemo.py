@@ -3,7 +3,7 @@ from LargeSystems.solvers import SimpleSolver
 from LargeSystems.system import System
 
 x, y, z = V("x", "y", "z")
-system = System(["x", "y", "z"])
+system = System("x", "y", "z")
 
 system.add_constraint(2 * x + 3 * y - z == 2)
 system.add_constraint(2 * x - z + y == 1)

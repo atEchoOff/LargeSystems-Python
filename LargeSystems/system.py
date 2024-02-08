@@ -2,12 +2,23 @@ import numpy as np
 from LargeSystems.solution import *
 from LargeSystems.linear import *
 
+# A quick utility to recursively flatten lists, helps to set variables
+def flatten(lst):
+    if isinstance(lst, str):
+        return [lst]
+    else:
+        ret = []
+        for elem in lst:
+            ret.extend(flatten(elem))
+        return ret
+
 class System:
     # Build a dense system of the form Ax = b
     # Add linear systems to matrix form as constraints are added
     
-    def __init__(self, names):
+    def __init__(self, *names):
         # Initialize a system builder given names for each variable
+        names = flatten(names)
         self.var_names = names
         self.A = np.matrix(np.zeros((len(names), len(names)), np.float64))
         self.b = np.zeros((len(names), 1), np.float64)

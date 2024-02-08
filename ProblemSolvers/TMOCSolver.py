@@ -83,16 +83,6 @@ class TMOCSolver:
         _y = ShiftedList(0, [ShiftedList(1, ["y" + str(i) + str(j) for j in range(1, self.ny + 1)]) for i in range(0, K + 1)])
         _λ = ShiftedList(1, [ShiftedList(1, ["λ" + str(i) + str(j) for j in range(1, self.ny + 1)]) for i in range(1, K + 1)])
         _u = ShiftedList(0, [ShiftedList(1, ["u" + str(i) + str(j) for j in range(1, self.nu + 1)]) for i in range(0, K + 1)])
-        
-        all_vars = []
-        for y in _y.list:
-            all_vars.extend(y.list)
-        
-        for l in _λ.list:
-            all_vars.extend(l.list)
-
-        for u in _u.list:
-            all_vars.extend(u.list)
 
         # Shorthand
         Δlᶠ = self.Δlᶠ
@@ -111,7 +101,7 @@ class TMOCSolver:
         t = [self.t0 + h * i for i in range(0, K + 1)]
         
         # Start building our system!
-        system = System(all_vars)
+        system = System(_y, _λ, _u)
 
         # Constraint from (8)
         system.add_constraint(λ[K] - h * (1 - θ) * fᵧ.T * λ[K] ==
