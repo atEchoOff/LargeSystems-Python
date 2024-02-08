@@ -197,16 +197,6 @@ class Linear:
         self = self + (-val)
         return self
     
-    def T(self):
-        # Transpose all coefficient matrices
-        ret = deepcopy(self)
-        for i in range(0, len(self.left)):
-            ret.left[i] = self.left[i].T
-
-        ret.constant = self.constant.T
-
-        return ret
-    
 class Equation:
     # Stores a linear equation, with the left hand side and the right hand side!
     # Really the only point of this class is to pass into a systembuilder

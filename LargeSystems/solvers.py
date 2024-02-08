@@ -53,7 +53,7 @@ class GradientMethodSolver:
         x = deepcopy(self.x0)
 
         if self.sparse:
-            A = deepcopy(csr_matrix(A))
+            A = csr_matrix(A)
         
         r = dict() # We use a dictionary for better visual indexing
 
