@@ -1,7 +1,7 @@
 from LargeSystems.solvers import GradientMethodSolver
 import numpy as np
 from matplotlib import pyplot as plt
-from Utils.PDEs import build_poisson
+from Utils.PDEs import build_1D_poisson
 
 def f(x):
     # Our function f(x)
@@ -11,7 +11,7 @@ def u(x):
     # True solution u(x)
     return np.cos(np.pi * x)
 
-system = build_poisson(30, 1, -1, f)
+system = build_1D_poisson(30, 1, -1, f)
 solver = GradientMethodSolver(sparse=True)
 
 x, _, _ = solver.solve(system)

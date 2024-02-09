@@ -8,6 +8,12 @@ class Identity:
         self.val = val
         self.shape = [dim]
 
+    def __repr__(self):
+        return str(self.val)
+    
+    def __str__(self):
+        return self.__repr__()
+
     def __getitem__(self, keys):
         # Simulate getting a value from the identity matrix, dont check bounds
         # We only use these matrices to get column arrays anyway
@@ -52,15 +58,15 @@ def V(*vars):
     # Items passed in as a series of lists
     # If one list, treated as one variable
     # If multiple, return as a list of variables
-    if len(vars) == 1:
-        return Linear(Identity(1, len(vars[0])), vars[0])
-    
     ret = []
     for var in vars:
         if isinstance(var, str):
             # variable must be packed in a list
             var = [var]
         ret.append(Linear(Identity(1, len(var)), var))
+
+    if len(ret) == 1:
+        return ret[0]
     return ret
 
 class Linear:
@@ -75,6 +81,20 @@ class Linear:
         else:
             self.left = None
             self.right = None
+
+    def __repr__(self):
+        ret = ""
+        for i in range(0, len(self.left)):
+            ret += str(self.left[i])
+            ret += " * "
+            ret += str(self.right[i])
+            if i != len(self.left) - 1:
+                ret += " + "
+        
+        return ret
+    
+    def __str__(self):
+        return self.__repr__()
 
     def deepcopy(self):
         # Return a deep copy of self
@@ -204,3 +224,12 @@ class Equation:
     def __init__(self, linear, RHS):
         self.linear = linear
         self.RHS = RHS
+
+    def __repr__(self):
+        ret = str(self.linear)
+        ret += " = "
+        ret += str(self.RHS)
+        return ret
+    
+    def __str__(self):
+        return self.__repr__()
