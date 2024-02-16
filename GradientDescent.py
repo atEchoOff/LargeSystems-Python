@@ -14,8 +14,8 @@ def u(x):
 system = build_1D_poisson(30, 1, -1, f)
 solver = GradientMethodSolver(sparse=True)
 
-x, _, _ = solver.solve(system)
-x = np.vstack(([1], x, [-1]))
+x = solver.solve(system)
+x = np.vstack(([1], x.values, [-1]))
 
 domain = np.linspace(0, 1, len(x))
 plt.plot(domain, u(domain), label="True u")

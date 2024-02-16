@@ -12,10 +12,25 @@ def u(x):
     return np.cos(np.pi * x)
 
 system = build_1D_poisson(30, 1, -1, f)
+
+class Metadata:
+    def __init__(self):
+        self.x_norms = []
+
+    def save(self, x, **kwargs):
+        # Save certain arguments. Here, we save just the norm of the iterands
+        self.x_norms.append(np.linalg.norm(x))
+
+metadata = Metadata()
 solver = ConjugateGradientMethodSolver(sparse=True)
 
-x, _, _ = solver.solve(system)
-x = np.vstack(([1], x, [-1]))
+x = solver.solve(system, metadata)
+x = np.vstack(([1], x.values, [-1]))
+
+# Fun fact about the conjugate gradient method: If you start at x0=0, then the norms of the iterands are strictly increasing!
+x_norms = []
+for i, norm in enumerate(metadata.x_norms):
+    print(f"||x_{i}|| \t = \t {norm}")
 
 domain = np.linspace(0, 1, len(x))
 plt.plot(domain, u(domain), label="True u")
