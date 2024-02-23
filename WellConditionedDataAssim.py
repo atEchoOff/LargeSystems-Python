@@ -53,7 +53,7 @@ def solve(θ, n, m, Δt, nt, mt, W, K, H, z, R, ρ):
 
         for j in range(mt - 1, -1, -1): # We include -1 to get down to 0
             v = v + H.T * w[m * j:m * j + m]
-            for i in range(nt // mt - 1, -1, -1):
+            for _ in range(nt // mt - 1, -1, -1):
                 # Scipy likes making vectors horizontal, so we need to override this
                 v = np.asmatrix(spsolve(matrix_2_111_left.T, v)).T
                 v = matrix_2_111_right.T * v

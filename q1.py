@@ -15,12 +15,12 @@ def run_approximation_1(N):
     # Initialize our constants
     h = 1 / (N + 1)
     A = MatrixWithBoundaryConditions(N)
-    b = np.hstack(([1], h ** 2 * f(h * np.arange(1, N + 1)), [-1])).T
+    b = np.asmatrix(np.hstack(([1], h ** 2 * f(h * np.arange(1, N + 1)), [-1]))).T
     y0 = (np.eye(1, N + 2, 0) - np.eye(1, N + 2, N + 1)).T
 
     # Store residuals as we run
-    res_norms = [np.linalg.norm(b)] # scipy forgets the first residual
-    def store_residuals(xk):
+    res_norms = [np.linalg.norm(b - A * y0)] # scipy forgets the first residual
+    def store_residuals(_):
         frame = inspect.currentframe().f_back
         res_norms.append(np.linalg.norm(frame.f_locals['r']))
     
@@ -35,7 +35,7 @@ def run_approximation_2(N):
     # Initialize our constants
     h = 1 / (N + 1)
     A = Tridiagonal(N, -1, 2, -1)
-    b = (h **2 * f(h * np.arange(1, N + 1)) + np.eye(1, N, 0) - np.eye(1, N, N - 1)).T
+    b = np.asmatrix((h **2 * f(h * np.arange(1, N + 1)) + np.eye(1, N, 0) - np.eye(1, N, N - 1))).T
     y0 = None # Shorthand for 0s matrix
 
     # Store residuals as we run
@@ -67,10 +67,10 @@ plt.plot(res_norms1, label="Residual L2 Norms")
 plt.xlabel("k")
 plt.ylabel("Norm")
 plt.legend()
-plt.title("The Residual Norms at each Iteration k")
+plt.title("The Residual Norms at each Iteration k for the First Scheme")
 plt.show()
 
-# Plot y1 data
+# Plot y2 data
 plt.plot(domain_2, y(domain_2), label="True Solution y")
 plt.scatter(domain_2, y2, label="Estimated Solution y", color="orange")
 plt.xlabel("x")
@@ -84,5 +84,5 @@ plt.plot(res_norms2, label="Residual L2 Norms")
 plt.xlabel("k")
 plt.ylabel("Norm")
 plt.legend()
-plt.title("The Residual Norms at each Iteration k")
+plt.title("The Residual Norms at each Iteration k for the Second Scheme")
 plt.show()

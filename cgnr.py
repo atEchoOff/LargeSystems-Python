@@ -10,7 +10,7 @@ class Tolerance(Enum):
     ZERO = 2 # Zero tolerance, go for maximum iterations
 
 def naturals():
-    # A helper method to loop over the natural numbers, the cg algorithm is formatted differently
+    # A helper method to loop over the natural numbers
     k = 0
     while True:
         yield k
@@ -19,7 +19,7 @@ def naturals():
 class CGNRSolver:
     # Solve least squares problem using CGNR
     def __init__(self, x0=None, tol_type=Tolerance.RESIDUAL, tol=1e-7, maxit=100):
-        # Initialize a conjugate gradient method solver
+        # Initialize a CGNR solver
         # x0 is the default starting vector, defaults to 0
         # Given tolerance type
         # tol is the tolerance level given tolerance type
@@ -65,11 +65,12 @@ class CGNRSolver:
             a = np.linalg.norm(Atr) ** 2 / np.linalg.norm(Ap) ** 2
             x += a * p
 
+            # We need rₖ and rₖ₊₁ so save a temporary new variable so we have both
             new_r = r - a * Ap
             new_Atr = At(new_r)
 
             b = np.linalg.norm(new_Atr) ** 2 / np.linalg.norm(Atr) ** 2
-            r = new_r
+            r = new_r # We no longer need rₖ
             Atr = new_Atr
 
             p = Atr + b * p

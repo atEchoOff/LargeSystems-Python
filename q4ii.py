@@ -1,5 +1,5 @@
-from ill_conditioned_data_assim import solve as solve_ill_conditioned
-from well_conditioned_data_assim import solve as solve_well_conditioned
+from IllConditionedDataAssim import solve as solve_ill_conditioned
+from WellConditionedDataAssim import solve as solve_well_conditioned
 from scipy.sparse.linalg import expm
 from scipy.sparse import csc_matrix, identity
 from matrices import compute_K, compute_H
@@ -45,7 +45,7 @@ for i in range(nt // mt, nt + 1, nt // mt):
 y0_est_no_noise, res_est_no_noise = solve_ill_conditioned(θ, n, m, Δt, nt, mt, W, K, H, z)
 
 # Now lets add some noise and do it over again
-z = z + np.multiply(np.random.normal(0, .01, size=z.shape), z)
+z = z + np.multiply(np.random.normal(size=z.shape), z) * .01
 y0_est_with_noise, res_est_with_noise = solve_ill_conditioned(θ, n, m, Δt, nt, mt, W, K, H, z)
 
 # Plot noiseless solution from ill-conditioned system
@@ -57,8 +57,9 @@ plt.legend()
 plt.show()
 
 # Show its residuals
-plt.plot(np.log(res_est_no_noise), label="Log(Residual Norms)")
+plt.plot(res_est_no_noise, label="Residual Norms")
 plt.title("Residuals for Ill-Conditioned System without Noise")
+plt.yscale("log")
 plt.xlabel("k")
 plt.legend()
 plt.show()
@@ -72,8 +73,9 @@ plt.legend()
 plt.show()
 
 # Show its residuals
-plt.plot(np.log(res_est_with_noise), label="Log(Residual Norms)")
+plt.plot(res_est_with_noise, label="Residual Norms")
 plt.title("Residuals for Ill-Conditioned System with Noise")
+plt.yscale("log")
 plt.xlabel("k")
 plt.legend()
 plt.show()
@@ -92,8 +94,9 @@ plt.legend()
 plt.show()
 
 # Show its residuals
-plt.plot(np.log(res_est_with_noise_and_reg), label="Log(Residual Norms)")
+plt.plot(res_est_with_noise_and_reg, label="Residual Norms")
 plt.title("Residuals for Well-Conditioned System with Noise")
+plt.yscale("log")
 plt.xlabel("k")
 plt.legend()
 plt.show()
